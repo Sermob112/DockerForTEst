@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  web:
+    image: sermob112/smtubase_test:tag
+    networks:
+      - mynetwork
+    command: python  manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/smtubase
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_DB_HOST=db
+      - DJANGO_DB_PORT=5432
+      - DJANGO_DB_NAME=test
+      - DJANGO_DB_USER=postgres
+      - DJANGO_DB_PASSWORD=sa
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sa
+      POSTGRES_HOST_AUTH_METHOD: trust
+    container_name: db
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
